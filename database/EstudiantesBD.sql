@@ -1,0 +1,3 @@
+DROP DATABASE IF EXISTS EstudiantesBD;
+CREATE DATABASE EstudiantesBD;
+USE EstudiantesBD;
