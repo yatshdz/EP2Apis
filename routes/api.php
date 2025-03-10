@@ -3,30 +3,24 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EstudianteController;
+use App\Http\Controllers\AuthController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+// Rutas públicas para autenticación
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Rutas protegidas por autenticación con Sanctum
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    // Rutas para gestionar estudiantes (protegidas con autenticación)
+    Route::get('estudiantes', [EstudianteController::class, 'index']);
+    Route::post('estudiantes', [EstudianteController::class, 'store']);
+    Route::put('estudiantes/{id}', [EstudianteController::class, 'update']);
+    Route::delete('estudiantes/{id}', [EstudianteController::class, 'destroy']);
+
+    // Cerrar sesión (revocar tokens)
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
-
-//Ruta para listar estudiantes (GET)
-Route::get('estudiantes', [EstudianteController::class, 'index']);
-
-//Ruta para crear un estudiante (POST)
-Route::post('estudiantes', [EstudianteController::class, 'store']);
-
-//Ruta para modificar un estudiante (PUT)
-Route::put('estudiantes/{id}', [EstudianteController::class, 'update']);
-
-//Ruta para eliminar un estudiante (DELETE)
-Route::delete('estudiantes/{id}', [EstudianteController::class, 'destroy']);
